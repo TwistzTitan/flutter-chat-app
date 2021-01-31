@@ -1,98 +1,93 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/controllers/validator.dart';
+import 'package:flash_chat/screens/chat_screen.dart';
+import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flash_chat/components/custom_roundedButton.dart';
 
 class RegistrationScreen extends StatefulWidget {
+  static final String routeID = "RegistrationScreen";
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  String _email;
+  String _password;
+  final auth = FirebaseAuth.instance;
+  UserCredential user;
+  void registrationFailed ()=> showDialog(
+                      context: context, 
+                      builder: (context){
+                          return SimpleDialog(
+                            title: Center(child: Text('Register Failed!')),
+                            children: [
+                              Center(child: Text('Verify email or password'))
+                            ],
+                          );
+                      });
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white12,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              height: 200.0,
-              child: Image.asset('images/logo.png'),
+            Flexible(
+              child: Hero(
+                tag: 'flash-logo',
+                child: Container(
+                  height: 200.0,
+                  child: Image.asset('images/logo.png'),
+                ),
+              ),
             ),
             SizedBox(
               height: 48.0,
             ),
             TextField(
               onChanged: (value) {
-                //Do something with the user input.
+                _email = value; 
               },
-              decoration: InputDecoration(
-                hintText: 'Enter your email',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-              ),
+              cursorColor: Colors.orangeAccent,
+              decoration: kCredentialTextFieldDecoration.copyWith(hintText: 'Enter your email'), 
+              keyboardType:TextInputType.emailAddress,
             ),
             SizedBox(
               height: 8.0,
             ),
             TextField(
               onChanged: (value) {
-                //Do something with the user input.
+                _password = value;
               },
-              decoration: InputDecoration(
-                hintText: 'Enter your password',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-              ),
+              cursorColor: Colors.orangeAccent,
+              decoration: kCredentialTextFieldDecoration.copyWith(hintText: 'Enter your password'),
+              obscureText: true,
+              
             ),
             SizedBox(
               height: 24.0,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                elevation: 5.0,
-                child: MaterialButton(
-                  onPressed: () {
-                    //Implement registration functionality.
-                  },
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
+            CustomRoundedButtton(
+              title: 'Register', 
+              color: Colors.orange, 
+              press: ()async {
+                ValidatorEmailPassword(_email,_password).validar() ?  
+
+                      await auth.createUserWithEmailAndPassword(email:_email,password:_password) != null ? Navigator.pushNamed(context,LoginScreen.routeID) : registrationFailed() 
+                      :
+                      registrationFailed();
+              },
+            )
           ],
         ),
       ),
     );
   }
+
 }
+

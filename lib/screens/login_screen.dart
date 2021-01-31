@@ -1,97 +1,95 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/components/custom_roundedButton.dart';
+import 'package:flash_chat/controllers/validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flash_chat/constants.dart';
+import 'chat_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+  static final String routeID = "LoginScreen";
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  final auth = FirebaseAuth.instance;
+  String _pass;
+  String _email;
+  void loginFailed ()=> showDialog(
+                      context: context, 
+                      builder: (context){
+                          return SimpleDialog(
+                            title: Center(child: Text('Login Failed!')),
+                            children: [
+                              Center(child: Text('Verify email or password'))
+                            ],
+                          );
+                      });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white12,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              height: 200.0,
-              child: Image.asset('images/logo.png'),
+            Flexible(
+              child: Hero(
+                tag: 'flash-logo',
+                child: Container(
+                  height: 200.0,
+                  child: Image.asset('images/logo.png'),
+                ),
+              ),
             ),
             SizedBox(
               height: 48.0,
             ),
             TextField(
               onChanged: (value) {
-                //Do something with the user input.
+                _email = value;
               },
-              decoration: InputDecoration(
-                hintText: 'Enter your email',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-              ),
+              cursorColor: Colors.orange,
+              decoration: kCredentialTextFieldDecoration.copyWith(hintText:'Enter your email')
             ),
             SizedBox(
               height: 8.0,
             ),
             TextField(
+              obscureText: true,
               onChanged: (value) {
-                //Do something with the user input.
+                _pass = value;
               },
-              decoration: InputDecoration(
-                hintText: 'Enter your password.',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-              ),
+              cursorColor: Colors.orange,
+              decoration: kCredentialTextFieldDecoration.copyWith(hintText:'Enter your password'),
             ),
             SizedBox(
               height: 24.0,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                color: Colors.lightBlueAccent,
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                elevation: 5.0,
-                child: MaterialButton(
-                  onPressed: () {
-                    //Implement login functionality.
-                  },
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: Text(
-                    'Log In',
-                  ),
-                ),
-              ),
+            CustomRoundedButtton(
+              title: 'Login',
+              color: Colors.orangeAccent,
+              press: ()async{
+                
+                if(ValidatorEmailPassword(_email,_pass).validar())
+                {
+                  try{
+                    await auth.signInWithEmailAndPassword(email: _email, password: _pass);
+                    Navigator.pushNamed(context,ChatScreen.routeID);
+                  }
+                  catch(Exception){
+                    loginFailed();
+                  }
+                }
+                else {
+                  loginFailed();
+                } 
+
+              },
             ),
           ],
         ),

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "950513240930",
+    "project_id": "tw-titan-chat",
+    "storage_bucket": "tw-titan-chat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950513240930:android:a67bfcf0c8678828647a3b",
+        "android_client_info": {
+          "package_name": "co.twistz.titan.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "950513240930-kfegsno2cnnfj5hp8qn5f83c9bi5qb81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMcXOcqj_zRFn1iYkPNYeAPUfUINiOw88"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "950513240930-kfegsno2cnnfj5hp8qn5f83c9bi5qb81.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
